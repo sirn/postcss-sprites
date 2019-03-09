@@ -4,7 +4,6 @@ import Promise from "bluebird";
 import _ from "lodash";
 import debug from "debug";
 import RasterFactory from "./factories/raster";
-import VectorFactory from "./factories/vector";
 
 /**
  * Wrap with promises.
@@ -23,7 +22,6 @@ const COMMENT_TOKEN_PREFIX = "@replace|";
 const GROUP_DELIMITER = ".";
 const GROUP_MASK = "*";
 const TYPE_RASTER = "raster";
-const TYPE_VECTOR = "vector";
 
 /**
  * Plugin defaults.
@@ -46,29 +44,6 @@ export const defaults = {
         padding: 0,
         engineOpts: {},
         exportOpts: {},
-    },
-    svgsprite: {
-        mode: {
-            css: {
-                dimensions: true,
-                bust: false,
-                render: {
-                    css: true,
-                },
-            },
-        },
-
-        shape: {
-            id: {
-                generator(name, file) {
-                    return new Buffer(file.path).toString("base64");
-                },
-            },
-        },
-
-        svg: {
-            precision: 5,
-        },
     },
     verbose: false,
 };
@@ -117,12 +92,7 @@ export function prepareGroupBy(opts) {
         });
     }
 
-    // Group by type - 'vector' or 'raster'
     opts.groupBy.unshift(image => {
-        if (/^\.svg/.test(path.extname(image.path))) {
-            return Promise.resolve(TYPE_VECTOR);
-        }
-
         return Promise.resolve(TYPE_RASTER);
     });
 }
@@ -326,15 +296,11 @@ export function runSpritesmith(opts, images) {
                 return tmp.join(GROUP_DELIMITER);
             })
             .map((images, tmp) => {
-                const factory =
-                    tmp.indexOf(TYPE_VECTOR) > -1 ? VectorFactory : RasterFactory;
+                const factory = RasterFactory;
 
                 return factory(opts, images).then(spritesheet => {
-                    // Remove the '_', 'raster' or 'vector' prefixes
                     tmp = tmp.split(GROUP_DELIMITER).splice(2);
-
                     spritesheet.groups = tmp.map(maskGroup());
-
                     return spritesheet;
                 });
             })

@@ -1,5 +1,11 @@
 # Change Log
 
+## Unreleased
+
+### Removed
+
+-   Support for SVG sprites due to dependencies on deprecated PhantomJS.
+
 ## [4.2.1] - 2017-02-07
 
 ### Fixed

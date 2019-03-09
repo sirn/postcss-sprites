@@ -186,10 +186,6 @@ Built-in filters:
 -   Default: `{}`
 -   Required: `false`
 
-###### svgsprite
-
-> A [svg-sprite](https://github.com/jkphl/svg-sprite#configuration-basics) configuration.
-
 ###### verbose
 
 > Prints the plugin output to the console.
