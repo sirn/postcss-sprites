@@ -1,6 +1,6 @@
-import Spritesmith from 'spritesmith';
-import Promise from 'bluebird';
-import _ from 'lodash';
+import Spritesmith from "spritesmith";
+import Promise from "bluebird";
+import _ from "lodash";
 
 /**
  * Generate the spritesheet.
@@ -9,30 +9,34 @@ import _ from 'lodash';
  * @return {Promise}
  */
 export default function run(opts, images) {
-	const config = _.defaultsDeep({}, {
-		src: _.map(images, 'path')
-	}, opts.spritesmith);
+    const config = _.defaultsDeep(
+        {},
+        {
+            src: _.map(images, "path"),
+        },
+        opts.spritesmith,
+    );
 
-	// Increase padding to handle retina ratio
-	if (areRetinaImages(images)) {
-		const ratio = _.chain(images)
-			.flatten('ratio')
-			.uniq()
-			.head()
-			.value()
-			.ratio;
+    // Increase padding to handle retina ratio
+    if (areRetinaImages(images)) {
+        const ratio = _.chain(images)
+            .flatten("ratio")
+            .uniq()
+            .head()
+            .value().ratio;
 
-		if (ratio) {
-			config.padding = config.padding * ratio;
-		}
-	}
+        if (ratio) {
+            config.padding = config.padding * ratio;
+        }
+    }
 
-	return Promise.promisify(Spritesmith.run, { context: Spritesmith })(config)
-		.then((spritesheet) => {
-			spritesheet.extension = 'png';
+    return Promise.promisify(Spritesmith.run, { context: Spritesmith })(config).then(
+        spritesheet => {
+            spritesheet.extension = "png";
 
-			return spritesheet;
-		});
+            return spritesheet;
+        },
+    );
 }
 
 /**
@@ -41,5 +45,5 @@ export default function run(opts, images) {
  * @return {Boolean}
  */
 function areRetinaImages(images) {
-	return _.every(images, image => image.retina);
+    return _.every(images, image => image.retina);
 }
